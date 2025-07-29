@@ -11,15 +11,21 @@
   <!-- Header -->
   <%- include('./partials/header') %>
 
-  <div class="flex flex-1">
-    <!-- Sidebar -->
-    <%- include('./partials/sidebar') %>
+  <div class="flex flex-1 flex-col md:flex-row">
+    <!-- Sidebar (hidden on mobile, show as slideout if needed) -->
+    <div class="md:block hidden">
+      <%- include('./partials/sidebar') %>
+    </div>
+    <!-- Mobile Sidebar Button -->
+    <div class="block md:hidden">
+      <!-- Optionally, add a sidebar toggle button here for mobile -->
+    </div>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6">
-      <section class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
+    <main class="flex-1 p-4 sm:p-6 md:p-8">
+      <section class="w-full max-w-lg mx-auto bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow space-y-6">
 
-        <h2 class="text-2xl font-bold">🎤 Voice Entry Form</h2>
+        <h2 class="text-xl sm:text-2xl font-bold text-center">🎤 Voice Entry Form</h2>
 
         <!-- Language Selector -->
         <div>
@@ -45,7 +51,6 @@
           <input name="quantity" id="quantity" type="number" placeholder="Quantity" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
           <input name="total" id="total" type="number" placeholder="Total Amount" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
           <input name="supplier" id="supplier" placeholder="Supplier Name" class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
-
           <!-- Admin Selector -->
           <select name="adminId" required class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
             <option value="">Select Admin</option>
@@ -53,7 +58,6 @@
               <option value="<%= admin._id %>"><%= admin.name %></option>
             <% }) %>
           </select>
-
           <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
             Submit Purchase
           </button>
@@ -69,34 +73,27 @@
   <!-- Voice Script -->
   <script>
     let lang = 'en-IN';
-
     function updateLang() {
       lang = document.getElementById('langSelect').value;
     }
-
     function startVoice() {
       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       recognition.lang = lang;
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
-
       recognition.start();
-
       recognition.onresult = function (event) {
         const speech = event.results[0][0].transcript.toLowerCase();
         document.getElementById('voiceOutput').innerText = 'You said: ' + speech;
-
         const productMatch = speech.match(/product\s+([\w\s]+)/);
         const quantityMatch = speech.match(/quantity\s+(\d+)/);
         const totalMatch = speech.match(/total\s+(\d+)/);
         const supplierMatch = speech.match(/supplier\s+([\w\s]+)/);
-
         if (productMatch) document.getElementById('product').value = productMatch[1].trim();
         if (quantityMatch) document.getElementById('quantity').value = quantityMatch[1].trim();
         if (totalMatch) document.getElementById('total').value = totalMatch[1].trim();
         if (supplierMatch) document.getElementById('supplier').value = supplierMatch[1].trim();
       };
-
       recognition.onerror = function (event) {
         document.getElementById('voiceOutput').innerText = 'Error: ' + event.error;
       };
