@@ -2,9 +2,11 @@
   <h2 class="text-lg font-semibold mb-3">Welcome, <%= session.user ? session.user.username : 'Guest' %></h2>
   <ul class="space-y-2">
     <li><a href="/Auth/dashboard" class="block p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">📊 Dashboard</a></li>
+    <li><a href="/Auth/add-admin" class="block p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">➕ Add Admin</a></li>
     <li><a href="/Auth/wallet" class="block p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">💰 My Wallet</a></li>
     <li><a href="/Auth/sale" class="block p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">➕ Add Sale</a></li>
     <li><a href="/Auth/purchase" class="block p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700">➕ Add Purchase</a></li>
+    <li><a href="/view-purchases" class="block p-2 hover:bg-gray-200 rounded">📄 View Purchases</a></li>
     <li><a href="/Auth/export/excel" class="block p-2 rounded hover:bg-green-200 dark:hover:bg-green-800">⬇️ Download Excel</a></li>
     <li><a href="/Auth/export/pdf" class="block p-2 rounded hover:bg-red-200 dark:hover:bg-red-800">⬇️ Download PDF</a></li>
   </ul>

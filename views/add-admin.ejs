@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-900 flex flex-col">
+
+  <!-- Header -->
+  <%- include('./partials/header') %>
+
+  <!-- Page Layout -->
+  <div class="flex flex-1">
+    <!-- Sidebar -->
+    <%- include('./partials/sidebar') %>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <div class="max-w-xl mx-auto bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+          <span>➕</span> Add New Admin
+        </h2>
+
+        <form action="/auth/add-admin" method="POST" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1" for="name">Name</label>
+            <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-400">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1" for="email">Email</label>
+            <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-400">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1" for="password">Password</label>
+            <input type="password" id="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-400">
+          </div>
+
+          <div class="text-right">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md">Add Admin</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <%- include('./partials/footer') %>
+</body>
+</html>

@@ -9,7 +9,18 @@ const jwt = require('jsonwebtoken');
 const ExcelJS = require('exceljs');
 const PDFDocument = require('pdfkit');
 
+router.get('/add-admin', (req, res) => {
+  res.render('add-admin');
+});
 
+router.post('/add-admin', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Save logic here (e.g., hashing password, inserting into DB)
+  await Admin.create({ name, email, password }); // Adjust to your DB schema
+
+  res.redirect('/auth/dashboard'); // or wherever you want to go
+});
 
 // Check Login or not
 function requireLogin(req, res, next) {
@@ -31,24 +42,18 @@ router.post('/', async (req, res) => {
   const admin = await Admin.findOne({ email });
   if (!admin) return res.status(400).send("Admin not found");
 
-  console.log(password);
-  
-
-  if(admin.password!=req.body.password){
-  return res.status(401).send("Invalid password");
+  if (admin.password != req.body.password) {
+    return res.status(401).send("Invalid password");
   }
 
   req.session.adminId = admin._id;
   req.session.adminName = admin.name;
 
   req.session.user = {
-  username: admin.name, // or use `user.username` or `user.email` based on your schema
-  id:admin._id
-};
-
+    username: admin.name, // or use `user.username` or `user.email` based on your schema
+    id: admin._id
+  };
   res.redirect('/auth/dashboard'); // or send success
-
-
 });
 
 // Logout
@@ -70,63 +75,83 @@ function getSalesGroupedByAdmin(sales) {
 }
 
 function getPurchasesGroupedByAdmin(purchases) {
-  const data = {};
+  const purchaseData = {};
   purchases.forEach(purchase => {
-    const name = purchase.adminName || 'Unknown';
-    data[name] = (data[name] || 0) + purchase.amount;
+    const name = purchase.adminId?.name || 'Unknown';
+    purchaseData[name] = (purchaseData[name] || 0) + (parseFloat(purchase.total) || 0);
   });
-  return data;
+  return purchaseData;
 }
 
 
 // GET: Dashboard
+
 router.get('/dashboard', async (req, res) => {
-  const { startDate, endDate, admin } = req.query;
+  try {
+    // Check if user is logged in
+    if (!req.session || !req.session.user || !req.session.user.id) {
+      return res.redirect('/auth'); // or show an error
+    }
 
-  const query = {};
-  if (startDate && endDate) {
-    query.date = {
-      $gte: new Date(startDate),
-      $lte: new Date(endDate),
-    };
+    const { startDate, endDate, admin } = req.query;
+
+    const query = {};
+    if (startDate && endDate) {
+      query.date = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    if (admin) {
+      query.adminId = admin;
+    }
+
+    const adminIdFromSession = req.session.user.id;
+
+    const admin1 = await Admin.findById(adminIdFromSession);
+
+    const sales = await Sale.find(query).populate('admin');
+    const purchases = await Purchase.find(query).populate('admin');
+
+    const adminNames = await Admin.find().select('name');
+    const totalAdmins = adminNames.length;
+
+    const salesData = await getSalesGroupedByAdmin(sales);
+    const purchaseData = await getPurchasesGroupedByAdmin(purchases);
+
+    const totalSales = sales.reduce((sum, s) => {
+      const amount = parseFloat(s.total);
+      return sum + (isNaN(amount) ? 0 : total);
+    }, 0);
+
+    const totalPurchases = purchases.reduce((sum, p) => {
+      const amount = parseFloat(p.total);
+      return sum + (isNaN(amount) ? 0 : amount);
+    }, 0);
+
+    res.render('dashboard', {
+      adminName: admin,
+      adminsList: adminNames,
+      adminNames: Object.keys(salesData),
+      salesData: Object.values(salesData),
+      purchaseData: Object.values(purchaseData),
+      totalAdmins,
+      totalSales,
+      totalPurchases,
+      admin1
+    });
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    res.status(500).send('Internal Server Error');
   }
-
-  if (admin) {
-    query.adminId = admin;
-  }
-
-  const admin1 = await Admin.findById(req.session.user.id);
-
-  const sales = await Sale.find(query);
-  const purchases = await Purchase.find(query);
-
-  const adminNames = await Admin.find().select('name');
-  const totalAdmins = adminNames.length;
-
-  const salesData = await getSalesGroupedByAdmin(sales);
-  const purchaseData = await getPurchasesGroupedByAdmin(purchases);
-
-  const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
-  const totalPurchases = purchases.reduce((sum, p) => sum + p.amount, 0);
-
-  res.render('dashboard', {
-    adminName: admin,
-    adminsList: adminNames,
-    adminNames: Object.keys(salesData),
-    salesData: Object.values(salesData),
-    purchaseData: Object.values(purchaseData),
-    totalAdmins,
-    totalSales,
-    totalPurchases,
-    admin1
-  });
 });
 
 
 // GET: Wallet Page
 router.get('/wallet', async (req, res) => {
   const admin = await Admin.findOne(); // Temporary: only 1 admin for now
-  res.render('wallet', { admin , adminName: admin.name});
+  res.render('wallet', { admin, adminName: admin.name });
 });
 
 // POST: Add Money
@@ -142,7 +167,7 @@ router.post('/wallet', async (req, res) => {
 // GET: Sales Form
 router.get('/sale', async (req, res) => {
   const admin = await Admin.findOne();
-  res.render('sale',{adminName: admin.name});
+  res.render('sale', { adminName: admin.name });
 });
 
 // POST: Save Sale
@@ -167,30 +192,14 @@ router.post('/sale', async (req, res) => {
 
 // GET: Purchase Form
 router.get('/purchase', async (req, res) => {
-  const admin = await Admin.findOne();
-  res.render('purchase',{adminName: admin.name});
+  try {
+    const adminsList = await Admin.find(); // get all admins from DB
+    res.render('purchase', { adminsList }); // pass to EJS
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
 });
-
-// POST: Save Purchase
-router.post('/purchase', async (req, res) => {
-  const { product, quantity, supplier, price } = req.body;
-  const total = parseFloat(quantity) * parseFloat(price);
-
-  const admin = await Admin.findOne(); // Replace with real session later
-
-  const newPurchase = new Purchase({
-    product,
-    quantity,
-    supplier,
-    price,
-    total,
-    addedBy: admin._id,
-  });
-
-  await newPurchase.save();
-  res.redirect('/purchase');
-});
-
 
 // GET: Expense Form
 router.get('/expense', (req, res) => {

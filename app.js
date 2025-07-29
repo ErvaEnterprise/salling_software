@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const authRoutes = require('./routes/authRoutes');
+const purchaseRoutes = require('./routes/purchaseRoutes');
 const voiceRoutes = require('./routes/voice');
 require('dotenv').config();
 
@@ -31,6 +32,7 @@ app.use(express.static('public'));
 
 app.use(express.json());
 app.use('/', voiceRoutes);
+app.use('/', purchaseRoutes);
 
 // MongoDB Connect
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })

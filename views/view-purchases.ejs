@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Purchases</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <%- include('./partials/header') %>
+
+  <div class="flex flex-1">
+    <!-- Sidebar -->
+    <%- include('./partials/sidebar') %>
+
+    <!-- Main Content -->
+    <main class="p-6 flex-1">
+      <!-- Page Title -->
+      <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+        <span>📦</span> Purchase Entries
+      </h2>
+
+      <!-- Purchase Table -->
+      <!-- Purchase Table -->
+<div class="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-lg">
+  <table class="w-full text-sm text-left text-gray-700 dark:text-gray-200">
+    <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+      <tr>
+        <th class="px-6 py-3">Admin Name</th>
+        <th class="px-6 py-3">Product</th>
+        <th class="px-6 py-3">Quantity</th>
+        <th class="px-6 py-3">Total Amount</th>
+        <th class="px-6 py-3">Supplier</th>
+        <th class="px-6 py-3">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% purchases.forEach((p, index) => { %>
+        <tr class="<%= index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-700' %> hover:bg-gray-100 dark:hover:bg-gray-600 border-b border-gray-200 dark:border-gray-600 transition-all">
+          <td class="px-6 py-4 font-medium"><%= p.admin.name || "Unknown" %></td>
+          <td class="px-6 py-4"><%= p.product %></td>
+          <td class="px-6 py-4"><%= p.quantity %></td>
+          <td class="px-6 py-4">₹ <%= p.total %></td>
+          <td class="px-6 py-4"><%= p.supplier %></td>
+          <td class="px-6 py-4"><%= p.date.toDateString() %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <%- include('./partials/footer') %>
+
+</body>
+</html>

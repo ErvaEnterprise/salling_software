@@ -12,7 +12,6 @@
   <%- include('./partials/header') %>
 
   <div class="flex flex-1">
-
     <!-- Sidebar -->
     <%- include('./partials/sidebar') %>
 
@@ -41,11 +40,20 @@
         </div>
 
         <!-- Purchase Form -->
-        <form method="POST" action="/purchase" class="space-y-4">
+        <form method="POST" action="/purchase" class="space-y-2">
           <input name="product" id="product" placeholder="Product" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
           <input name="quantity" id="quantity" type="number" placeholder="Quantity" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
           <input name="total" id="total" type="number" placeholder="Total Amount" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
           <input name="supplier" id="supplier" placeholder="Supplier Name" class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
+
+          <!-- Admin Selector -->
+          <select name="adminId" required class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            <option value="">Select Admin</option>
+            <% adminsList.forEach(admin => { %>
+              <option value="<%= admin._id %>"><%= admin.name %></option>
+            <% }) %>
+          </select>
+
           <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
             Submit Purchase
           </button>
@@ -78,16 +86,15 @@
         const speech = event.results[0][0].transcript.toLowerCase();
         document.getElementById('voiceOutput').innerText = 'You said: ' + speech;
 
-        // Simple parser (customize if needed)
-        const productMatch = speech.match(/product\s*([a-zA-Z0-9]+)/);
-        const quantityMatch = speech.match(/quantity\s*(\d+)/);
-        const totalMatch = speech.match(/total\s*(\d+)/);
-        const supplierMatch = speech.match(/supplier\s*([a-zA-Z]+)/);
+        const productMatch = speech.match(/product\s+([\w\s]+)/);
+        const quantityMatch = speech.match(/quantity\s+(\d+)/);
+        const totalMatch = speech.match(/total\s+(\d+)/);
+        const supplierMatch = speech.match(/supplier\s+([\w\s]+)/);
 
-        if (productMatch) document.getElementById('product').value = productMatch[1];
-        if (quantityMatch) document.getElementById('quantity').value = quantityMatch[1];
-        if (totalMatch) document.getElementById('total').value = totalMatch[1];
-        if (supplierMatch) document.getElementById('supplier').value = supplierMatch[1];
+        if (productMatch) document.getElementById('product').value = productMatch[1].trim();
+        if (quantityMatch) document.getElementById('quantity').value = quantityMatch[1].trim();
+        if (totalMatch) document.getElementById('total').value = totalMatch[1].trim();
+        if (supplierMatch) document.getElementById('supplier').value = supplierMatch[1].trim();
       };
 
       recognition.onerror = function (event) {

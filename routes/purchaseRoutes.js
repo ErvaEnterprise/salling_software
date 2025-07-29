@@ -1,31 +1,38 @@
 const express = require('express');
 const router = express.Router();
 const Purchase = require('../models/Purchase');
-const Admin = require('../models/Admin');
 
-// POST /purchase
 router.post('/purchase', async (req, res) => {
   try {
-    const { product, quantity, total, supplier } = req.body;
-    const adminId = req.session.adminId; // from session
+    const { product, quantity, total, supplier, adminId } = req.body;
 
-    // Create purchase
     const purchase = new Purchase({
       product,
       quantity,
       total,
       supplier,
-      investedBy: adminId
+      admin: adminId
     });
 
     await purchase.save();
 
-    // Deduct money from admin wallet
-    await Admin.findByIdAndUpdate(adminId, { $inc: { wallet: -total } });
-
-    res.redirect('/dashboard');
+    res.redirect('/auth/dashboard');
   } catch (err) {
-    console.error('Purchase Error:', err);
-    res.status(500).send('Failed to save purchase');
+    console.error('Purchase save error:', err);
+    res.status(500).send('Server error');
   }
 });
+
+router.get('/view-purchases', async (req, res) => {
+  try {
+    const purchases = await Purchase.find().populate('admin', 'name').sort({ date: -1 });
+    res.render('view-purchases', {
+      purchases
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+module.exports = router;
