@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Summary</title>
+</head>
+<body>
+  <h2>Admin Investment & Profit Summary</h2>
+  <table border="1">
+    <tr>
+      <th>Admin</th>
+      <th>Wallet (Invested)</th>
+      <th>Total Sales</th>
+      <th>Total Purchases</th>
+      <th>Total Expenses</th>
+      <th>Profit / Loss</th>
+    </tr>
+    <% summary.forEach(row => { %>
+      <tr>
+        <td><%= row.adminName %></td>
+        <td>₹<%= row.invested.toFixed(2) %></td>
+        <td>₹<%= row.totalSales.toFixed(2) %></td>
+        <td>₹<%= row.totalPurchases.toFixed(2) %></td>
+        <td>₹<%= row.totalExpenses.toFixed(2) %></td>
+        <td style="color:<%= row.profit >= 0 ? 'green' : 'red' %>">
+          ₹<%= row.profit.toFixed(2) %>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <a href="/dashboard">⬅ Back to Dashboard</a>
+</body>
+</html>

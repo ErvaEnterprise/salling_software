@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Voice Entry | Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <%- include('./partials/header') %>
+
+  <div class="flex flex-1">
+
+    <!-- Sidebar -->
+    <%- include('./partials/sidebar') %>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <section class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
+
+        <h2 class="text-2xl font-bold">🎤 Voice Entry Form</h2>
+
+        <!-- Language Selector -->
+        <div>
+          <label for="langSelect" class="block mb-1 font-medium">Select Language</label>
+          <select id="langSelect" onchange="updateLang()" class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            <option value="en-IN">English</option>
+            <option value="hi-IN">हिंदी</option>
+            <option value="gu-IN">ગુજરાતી</option>
+          </select>
+        </div>
+
+        <!-- Voice Button -->
+        <div>
+          <button type="button" onclick="startVoice()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+            🎙️ Speak Entry
+          </button>
+          <p id="voiceOutput" class="mt-2 text-sm text-gray-600 dark:text-gray-300"></p>
+        </div>
+
+        <!-- Purchase Form -->
+        <form method="POST" action="/purchase" class="space-y-4">
+          <input name="product" id="product" placeholder="Product" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
+          <input name="quantity" id="quantity" type="number" placeholder="Quantity" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
+          <input name="total" id="total" type="number" placeholder="Total Amount" required class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
+          <input name="supplier" id="supplier" placeholder="Supplier Name" class="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600" />
+          <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+            Submit Purchase
+          </button>
+        </form>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <%- include('./partials/footer') %>
+
+  <!-- Voice Script -->
+  <script>
+    let lang = 'en-IN';
+
+    function updateLang() {
+      lang = document.getElementById('langSelect').value;
+    }
+
+    function startVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = lang;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = function (event) {
+        const speech = event.results[0][0].transcript.toLowerCase();
+        document.getElementById('voiceOutput').innerText = 'You said: ' + speech;
+
+        // Simple parser (customize if needed)
+        const productMatch = speech.match(/product\s*([a-zA-Z0-9]+)/);
+        const quantityMatch = speech.match(/quantity\s*(\d+)/);
+        const totalMatch = speech.match(/total\s*(\d+)/);
+        const supplierMatch = speech.match(/supplier\s*([a-zA-Z]+)/);
+
+        if (productMatch) document.getElementById('product').value = productMatch[1];
+        if (quantityMatch) document.getElementById('quantity').value = quantityMatch[1];
+        if (totalMatch) document.getElementById('total').value = totalMatch[1];
+        if (supplierMatch) document.getElementById('supplier').value = supplierMatch[1];
+      };
+
+      recognition.onerror = function (event) {
+        document.getElementById('voiceOutput').innerText = 'Error: ' + event.error;
+      };
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Voice Entry | Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <%- include('./partials/header') %>
+
+  <div class="flex flex-1">
+
+    <!-- Sidebar -->
+    <%- include('./partials/sidebar') %>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <section class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+
+        <h2 class="text-2xl font-bold mb-6">🎤 Voice Entry Form</h2>
+
+        <!-- Language Selector -->
+        <div class="mb-4">
+          <label for="langSelect" class="block mb-1 font-medium">Select Language</label>
+          <select id="langSelect" onchange="updateLang()" class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            <option value="en-IN">English</option>
+            <option value="hi-IN">हिंदी</option>
+            <option value="gu-IN">ગુજરાતી</option>
+          </select>
+        </div>
+
+        <!-- Voice Button -->
+        <div class="mb-4">
+          <button onclick="startVoice()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+            🎙️ Speak Entry
+          </button>
+          <p id="voiceOutput" class="mt-2 text-sm text-gray-600 dark:text-gray-300"></p>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="space-y-4">
+          <input type="text" id="product" name="product" placeholder="Product"
+            class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+          <input type="text" id="quantity" name="quantity" placeholder="Quantity"
+            class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+          <input type="text" id="buyer" name="buyer" placeholder="Buyer/Supplier"
+            class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+          <input type="text" id="total" name="total" placeholder="Total"
+            class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <%- include('./partials/footer') %>
+
+  <script src="/js/voice.js"></script>
+</body>
+</html>

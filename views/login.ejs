@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | E-Commerce Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url('/images/bg-login.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-black/60 backdrop-blur-sm">
+
+  <div class="bg-white/90 p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-6">
+      <!-- <img src="/images/logo.png" alt="Logo" class="w-20 h-20 mx-auto" /> -->
+      <h1 class="text-2xl font-bold text-gray-800 mt-2">E-Commerce Admin Login</h1>
+    </div>
+
+    <!-- Login Form -->
+    <form action="/Auth" method="POST" class="space-y-5">
+      <div>
+        <label class="block mb-1 text-sm font-semibold text-gray-700">Username</label>
+        <input
+          type="text"
+          name="email"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm font-semibold text-gray-700">Password</label>
+        <input
+          type="password"
+          name="password"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded-xl font-semibold hover:bg-blue-700 transition"
+      >
+        Login
+      </button>
+    </form>
+
+    <!-- Voice Login Button -->
+    <div class="mt-5 text-center">
+      <button
+        onclick="startVoiceLogin()"
+        class="w-full py-2 mt-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition"
+      >
+        🔊 Login with Voice
+      </button>
+    </div>
+  </div>
+
+
+
+</body>
+</html>
+
+<script>
+  function startVoiceLogin() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Voice recognition not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN'; // or 'hi-IN' for Hindi, 'gu-IN' for Gujarati
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+
+    recognition.onstart = () => {
+      alert("🎙️ Speak your username and password clearly...");
+    };
+
+    recognition.onresult = (event) => {
+      const speechText = event.results[0][0].transcript;
+      console.log("Voice Input:", speechText);
+
+      // Optional: Automatically fill input fields
+      const [username, password] = speechText.split(' ');
+      if (username && password) {
+        document.querySelector('input[name="username"]').value = username;
+        document.querySelector('input[name="password"]').value = password;
+      } else {
+        alert("Could not detect username and password from voice input.");
+      }
+    };
+
+    recognition.onerror = (event) => {
+      alert("Voice error: " + event.error);
+    };
+  }
+</script>
+

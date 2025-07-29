@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Wallet | Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 dark:text-white">
+
+  <!-- Include Header -->
+  <%- include('./partials/header') %>
+
+  <div class="flex min-h-screen">
+    
+    <!-- Include Sidebar -->
+    <%- include('./partials/sidebar') %>
+
+    <!-- Wallet Main Content -->
+    <main class="flex-1 p-6">
+      <div class="max-w-xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+        
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold flex items-center gap-2">
+            💰 <%= adminName %> Wallet
+          </h2>
+          <p class="text-gray-700 dark:text-gray-300 mt-2">
+            Manage your wallet funds here.
+          </p>
+        </div>
+
+        <!-- Wallet Balance -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Current Balance</label>
+          <div class="mt-1 p-3 bg-gray-100 dark:bg-gray-700 rounded text-lg font-semibold">
+            ₹ <%= admin.wallet.toFixed(2) %>
+          </div>
+        </div>
+
+        <!-- Add Money Form -->
+        <form method="POST" action="/auth/wallet" class="space-y-4">
+          <div>
+            <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Add Amount</label>
+            <input 
+              type="number" 
+              name="amount" 
+              step="0.01" 
+              required 
+              class="mt-1 w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              placeholder="Enter amount" />
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md font-semibold">
+            ➕ Add Money
+          </button>
+        </form>
+
+        <!-- Back Button -->
+        <div class="mt-6 text-center">
+          <a href="/auth/dashboard" class="text-blue-600 hover:underline text-sm">⬅ Back to Dashboard</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Include Footer -->
+  <%- include('./partials/footer') %>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><title>Transaction History</title></head>
+<body>
+  <h2>All Sales</h2>
+  <table border="1">
+    <tr><th>Product</th><th>Qty</th><th>Customer</th><th>Total</th><th>By</th></tr>
+    <% sales.forEach(s => { %>
+      <tr>
+        <td><%= s.product %></td>
+        <td><%= s.quantity %></td>
+        <td><%= s.customer %></td>
+        <td>₹<%= s.total %></td>
+        <td><%= s.addedBy.name %></td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <h2>All Purchases</h2>
+  <table border="1">
+    <tr><th>Product</th><th>Qty</th><th>Supplier</th><th>Total</th><th>By</th></tr>
+    <% purchases.forEach(p => { %>
+      <tr>
+        <td><%= p.product %></td>
+        <td><%= p.quantity %></td>
+        <td><%= p.supplier %></td>
+        <td>₹<%= p.total %></td>
+        <td><%= p.addedBy.name %></td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <h2>All Expenses</h2>
+  <table border="1">
+    <tr><th>Category</th><th>Amount</th><th>Note</th><th>By</th></tr>
+    <% expenses.forEach(e => { %>
+      <tr>
+        <td><%= e.category %></td>
+        <td>₹<%= e.amount %></td>
+        <td><%= e.note %></td>
+        <td><%= e.addedBy.name %></td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <a href="/dashboard">⬅ Back</a>
+</body>
+</html>

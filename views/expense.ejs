@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>Expense</title></head>
+<body>
+  <h2>Add Expense</h2>
+  <form method="POST" action="/expense">
+    <select name="category">
+      <option value="r">Rent</option>
+      <option value="e">Electricity</option>
+      <option value="s">Salary</option>
+      <option value="t">Transport</option>
+      <option value="o">Other</option>
+    </select><br>
+    <input type="number" name="amount" placeholder="Amount"><br>
+    <input type="text" name="note" placeholder="Note (optional)"><br>
+    <button type="submit">Save</button>
+  </form>
+
+  <a href="/dashboard">⬅ Back</a>
+</body>
+</html>
